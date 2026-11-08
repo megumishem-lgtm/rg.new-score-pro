@@ -1,0 +1,487 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RG Score Pro | Main Dashboard</title>
+
+<style>
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  padding: 25px;
+  font-family: Arial, sans-serif;
+  background: #100d1c;
+  color: white;
+}
+
+.container {
+  max-width: 1100px;
+  margin: auto;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+header h1 {
+  color: #c9a5ff;
+  font-size: 36px;
+  margin-bottom: 8px;
+}
+
+header p { color: #b9adc9; }
+
+h2 {
+  color: #d7baff;
+  margin-top: 35px;
+}
+
+.section {
+  background: #211a35;
+  border: 1px solid #59427d;
+  border-radius: 14px;
+  padding: 20px;
+  margin-bottom: 22px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.card {
+  background: #211a35;
+  border: 1px solid #59427d;
+  border-radius: 12px;
+  padding: 18px;
+}
+
+.card h3 {
+  color: #d7baff;
+  text-align: center;
+}
+
+input {
+  width: 100%;
+  padding: 11px;
+  margin: 7px 0;
+  border-radius: 7px;
+  border: 1px solid #8065a6;
+  background: #171126;
+  color: white;
+}
+
+button {
+  padding: 11px 15px;
+  border: none;
+  border-radius: 7px;
+  background: #8654c9;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  margin: 5px 3px;
+}
+
+button:hover { background: #a477e8; }
+
+.secondary { background: #493766; }
+.danger { background: #9b3d65; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+  min-width: 650px;
+}
+
+th, td {
+  padding: 12px;
+  border-bottom: 1px solid #59427d;
+  text-align: center;
+}
+
+th {
+  color: #d7baff;
+  background: #302449;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+.rank {
+  color: #e0c2ff;
+  font-weight: bold;
+}
+
+.footer {
+  text-align: center;
+  color: #9c8cad;
+  margin-top: 35px;
+  font-size: 13px;
+}
+
+.status {
+  color: #c9a5ff;
+  font-size: 13px;
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<header>
+  <h1>RG SCORE PRO</h1>
+  <p>Rhythmic Gymnastics Competition Management System</p>
+  <p>Main Dashboard | Competition Control Center</p>
+</header>
+
+<!-- COMPETITION INFORMATION -->
+<div class="section">
+  <h2>Competition Information</h2>
+
+  <input id="competition" placeholder="Competition Name">
+  <input id="date" type="date">
+  <input id="venue" placeholder="Competition Venue">
+</div>
+
+<!-- JUDGE PORTALS -->
+<h2>Judge Portals</h2>
+
+<div class="grid">
+
+  <div class="card">
+    <h3>DB Judge</h3>
+    <p>Body Difficulties</p>
+    <input id="dbURL" placeholder="Paste DB Judge URL">
+    <button onclick="savePortal('db')">Save URL</button>
+    <button onclick="openPortal('db')">Open Portal</button>
+    <p id="dbStatus" class="status"></p>
+  </div>
+
+  <div class="card">
+    <h3>DA Judge</h3>
+    <p>Apparatus Difficulties</p>
+    <input id="daURL" placeholder="Paste DA Judge URL">
+    <button onclick="savePortal('da')">Save URL</button>
+    <button onclick="openPortal('da')">Open Portal</button>
+    <p id="daStatus" class="status"></p>
+  </div>
+
+  <div class="card">
+    <h3>A Judge</h3>
+    <p>Artistry Evaluation</p>
+    <input id="aURL" placeholder="Paste Artistry Judge URL">
+    <button onclick="savePortal('a')">Save URL</button>
+    <button onclick="openPortal('a')">Open Portal</button>
+    <p id="aStatus" class="status"></p>
+  </div>
+
+  <div class="card">
+    <h3>E Judge</h3>
+    <p>Execution Evaluation</p>
+    <input id="eURL" placeholder="Paste Execution Judge URL">
+    <button onclick="savePortal('e')">Save URL</button>
+    <button onclick="openPortal('e')">Open Portal</button>
+    <p id="eStatus" class="status"></p>
+  </div>
+
+</div>
+
+<!-- ATHLETE RESULTS -->
+<h2>Athlete Scores</h2>
+
+<div class="section">
+
+  <h3>Add Athlete Result</h3>
+
+  <input id="athlete" placeholder="Athlete Name">
+  <input id="club" placeholder="Club / Team">
+  <input id="apparatus" placeholder="Apparatus (Ball, Hoop, Clubs, Ribbon, Rope)">
+
+  <input id="db" type="number" step="0.001" placeholder="DB Score">
+  <input id="da" type="number" step="0.001" placeholder="DA Score">
+  <input id="execution" type="number" step="0.001" placeholder="E Score">
+  <input id="artistry" type="number" step="0.001" placeholder="A Score">
+  <input id="penalties" type="number" step="0.001" placeholder="Penalties">
+
+  <button onclick="addAthlete()">Add Result</button>
+
+  <p class="status" id="message"></p>
+
+</div>
+
+<!-- LEADERBOARD -->
+<div class="section">
+
+  <h2>Competition Leaderboard</h2>
+  <p>Ranked from highest to lowest final score.</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Rank</th>
+          <th>Athlete</th>
+          <th>Club</th>
+          <th>Apparatus</th>
+          <th>DB</th>
+          <th>DA</th>
+          <th>E</th>
+          <th>A</th>
+          <th>Penalty</th>
+          <th>Final Score</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+
+      <tbody id="leaderboard"></tbody>
+    </table>
+  </div>
+
+  <button onclick="exportCSV()">Export Ranked CSV</button>
+  <button class="secondary" onclick="window.print()">Print Leaderboard</button>
+  <button class="danger" onclick="clearResults()">Clear All Results</button>
+
+</div>
+
+<div class="footer">
+  <p>RG Score Pro © 2026</p>
+  <p>Rhythmic Gymnastics Scoring Prototype</p>
+</div>
+
+</div>
+
+<script>
+
+// DATA STORAGE
+let results = JSON.parse(
+  localStorage.getItem("rg_results") || "[]"
+);
+
+// LOAD SAVED PORTALS
+["db", "da", "a", "e"].forEach(judge => {
+  const saved = localStorage.getItem("rg_" + judge + "_url");
+
+  if (saved) {
+    document.getElementById(judge + "URL").value = saved;
+    document.getElementById(judge + "Status").textContent = "URL saved";
+  }
+});
+
+// SAVE PORTAL URL
+function savePortal(judge) {
+  const url = document.getElementById(judge + "URL").value.trim();
+
+  try {
+    const parsed = new URL(url);
+
+    if (!["http:", "https:"].includes(parsed.protocol)) {
+      throw new Error("Invalid protocol");
+    }
+
+    localStorage.setItem("rg_" + judge + "_url", url);
+    document.getElementById(judge + "Status").textContent = "URL saved!";
+  } catch {
+    alert("Enter a valid website URL beginning with https://");
+  }
+}
+
+// OPEN PORTAL
+function openPortal(judge) {
+  const url = localStorage.getItem("rg_" + judge + "_url");
+
+  if (!url) {
+    alert("Please save the judge website URL first.");
+    return;
+  }
+
+  window.open(url, "_blank", "noopener,noreferrer");
+}
+
+// ADD ATHLETE RESULT
+function addAthlete() {
+
+  const name = document.getElementById("athlete").value.trim();
+  const club = document.getElementById("club").value.trim();
+  const apparatus = document.getElementById("apparatus").value.trim();
+
+  const fields = ["db", "da", "execution", "artistry", "penalties"];
+  const values = {};
+
+  if (!name || !club || !apparatus) {
+    alert("Please enter the athlete, club, and apparatus.");
+    return;
+  }
+
+  for (const field of fields) {
+    const raw = document.getElementById(field).value;
+    const value = Number(raw);
+
+    if (raw.trim() === "" || !Number.isFinite(value) || value < 0) {
+      alert("Please enter valid non-negative scores in all score fields.");
+      return;
+    }
+
+    values[field] = value;
+  }
+
+  // Simplified prototype formula; validate before official use.
+  const finalScore =
+    values.db + values.da + values.execution +
+    values.artistry - values.penalties;
+
+  results.push({
+    name,
+    club,
+    apparatus,
+    ...values,
+    finalScore
+  });
+
+  saveResults();
+  renderLeaderboard();
+
+  document.querySelectorAll(
+    "#athlete, #club, #apparatus, #db, #da, #execution, #artistry, #penalties"
+  ).forEach(input => input.value = "");
+
+  document.getElementById("message").textContent =
+    "Athlete result added successfully!";
+}
+
+// SAVE RESULTS
+function saveResults() {
+  localStorage.setItem("rg_results", JSON.stringify(results));
+}
+
+// DISPLAY RANKINGS
+function renderLeaderboard() {
+
+  const sorted = [...results].sort(
+    (a, b) => b.finalScore - a.finalScore
+  );
+
+  const tbody = document.getElementById("leaderboard");
+  tbody.innerHTML = "";
+
+  sorted.forEach((r, index) => {
+
+    const originalIndex = results.indexOf(r);
+
+    const row = document.createElement("tr");
+
+    const values = [
+      index + 1,
+      r.name,
+      r.club,
+      r.apparatus,
+      r.db.toFixed(3),
+      r.da.toFixed(3),
+      r.execution.toFixed(3),
+      r.artistry.toFixed(3),
+      r.penalties.toFixed(3),
+      r.finalScore.toFixed(3)
+    ];
+
+    values.forEach((value, i) => {
+      const cell = document.createElement("td");
+      cell.textContent = value;
+
+      if (i === 0) cell.className = "rank";
+
+      row.appendChild(cell);
+    });
+
+    const actionCell = document.createElement("td");
+    const deleteButton = document.createElement("button");
+
+    deleteButton.textContent = "Delete";
+    deleteButton.className = "danger";
+    deleteButton.onclick = () => {
+      results.splice(originalIndex, 1);
+      saveResults();
+      renderLeaderboard();
+    };
+
+    actionCell.appendChild(deleteButton);
+    row.appendChild(actionCell);
+    tbody.appendChild(row);
+  });
+}
+
+// EXPORT RANKED RESULTS
+function exportCSV() {
+
+  if (results.length === 0) {
+    alert("No athlete results to export.");
+    return;
+  }
+
+  const sorted = [...results].sort(
+    (a, b) => b.finalScore - a.finalScore
+  );
+
+  const headers = [
+    "Rank", "Athlete", "Club", "Apparatus",
+    "DB", "DA", "Execution", "Artistry",
+    "Penalties", "Final Score"
+  ];
+
+  const rows = sorted.map((r, i) => [
+    i + 1,
+    r.name,
+    r.club,
+    r.apparatus,
+    r.db.toFixed(3),
+    r.da.toFixed(3),
+    r.execution.toFixed(3),
+    r.artistry.toFixed(3),
+    r.penalties.toFixed(3),
+    r.finalScore.toFixed(3)
+  ]);
+
+  const csv = [headers, ...rows]
+    .map(row => row.map(value =>
+      '"' + String(value).replace(/"/g, '""') + '"'
+    ).join(","))
+    .join("\n");
+
+  const blob = new Blob([csv], {
+    type: "text/csv;charset=utf-8;"
+  });
+
+  const link = document.createElement("a");
+  const url = URL.createObjectURL(blob);
+
+  link.href = url;
+  link.download = "RG-Score-Pro-Rankings.csv";
+  link.click();
+
+  URL.revokeObjectURL(url);
+}
+
+// CLEAR RESULTS
+function clearResults() {
+
+  if (!confirm("Are you sure you want to delete all athlete results?")) {
+    return;
+  }
+
+  results = [];
+  saveResults();
+  renderLeaderboard();
+}
+
+// INITIAL DISPLAY
+renderLeaderboard();
+
+</script>
+</body>
+</html>
